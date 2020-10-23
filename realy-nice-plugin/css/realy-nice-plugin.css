@@ -1,0 +1,240 @@
+/* common style for posts and archive */
+.container {
+  width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: flex-start
+}
+
+.container.single {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.posts {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.post {
+  margin: 50px 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post_url {
+  text-decoration: none !important;
+}
+
+.post__title {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.fragment {
+  width: 450px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+ul.page-numbers {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+ul.page-numbers li {
+  background-color: lightgray;
+  margin: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid gray;
+}
+
+ul.page-numbers li a {
+  text-decoration: none;
+  color: blue;
+}
+
+.slide-up {
+  transform: translateY(-6px);
+  border: none !important;
+  background-color: black !important; 
+  color: red;
+}
+
+
+/* 
+***********
+***********
+LIKE
+***********
+***********
+*/
+
+.like-block {
+  width: 67%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.like-svg {
+  margin-bottom: 20px;
+}
+
+#like {
+  fill: gray;
+}
+#like:hover {
+  cursor: pointer;
+  fill: pink;
+}
+
+.like-count {
+  margin-left: 5px;
+  font-size: 20px;
+  font-weight: 600;
+  color: red;
+}
+
+.active-like {
+  fill: red !important;
+}
+
+/* 
+***********
+***********
+LOAD MORE
+***********
+***********
+*/
+
+.load_more {
+  text-decoration: none;
+  color: black;
+  padding: 10px 20px;
+  background-color: gray;
+  font-weight: 700;
+  margin-bottom: 60px;
+}
+
+.load_more:hover {
+  filter: blur(1px);
+}
+
+/* 
+***********
+***********
+CALENDAR
+***********
+***********
+*/
+
+.wrapper {
+  margin: 15px auto;
+  max-width: 1100px;
+}
+
+.container-calendar {
+  background: #ffffff;
+  padding: 15px;
+  max-width: 475px;
+  margin: 0 auto;
+  overflow: auto;
+}
+
+.button-container-calendar button {
+  cursor: pointer;
+  display: inline-block;
+  zoom: 1;
+  background: #00a2b7;
+  color: #fff;
+  border: 1px solid #0aa2b5;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+
+.table-calendar {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-calendar td, .table-calendar th {
+  padding: 5px;
+  border: 1px solid #e2e2e2;
+  text-align: center;
+  vertical-align: top;
+}
+
+.date-picker.selected {
+  font-weight: bold !important;
+  outline: 1px dashed #00BCD4 !important;
+}
+
+.date-picker.selected span {
+  border-bottom: 2px solid currentColor !important;
+} 
+
+.date-picker a {
+  text-decoration: none;
+}
+
+/* sunday */
+.date-picker:nth-child(1) {
+color: red;
+}
+
+/* friday */
+.date-picker:nth-child(6) {
+color: green;
+}
+
+#monthAndYear {
+  text-align: center;
+  margin-top: 0;
+}
+
+.button-container-calendar {
+  position: relative;
+  margin-bottom: 1em;
+  overflow: hidden;
+  clear: both;
+}
+
+#previous {
+  float: left;
+}
+
+#next {
+  float: right;
+}
+
+.footer-container-calendar {
+  margin-top: 1em;
+  border-top: 1px solid #dadada;
+  padding: 10px 0;
+}
+
+.footer-container-calendar select {
+  cursor: pointer;
+  display: inline-block;
+  zoom: 1;
+  background: #ffffff;
+  color: #585858;
+  border: 1px solid #bfc5c5;
+  border-radius: 3px;
+  padding: 5px 1em;
+}

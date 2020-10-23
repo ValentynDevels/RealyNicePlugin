@@ -1,0 +1,58 @@
+.inside {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+
+#fragment_field,
+#date_field {
+  border: 1px solid lightgray;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  margin: 0;
+  font-size: 18px;
+}
+
+#fragment_field {
+  height: 300px;
+  width: 100%;
+  resize: none;
+  font-weight: 100;
+  background-color: rgba(246, 255, 206, 0.616);
+}
+
+#date_field {
+  border-bottom: none;
+}
+
+#fragment_field:focus,
+#date_field:focus {
+  background-color: white;
+}
+
+#frgment_label,
+#date_label {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+input[name='default_options[amount]'] {
+  width: 55px;
+}
+
+.form-table tbody tr:nth-child(2) td {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-table tbody tr:nth-child(2) td label {
+  margin: 3px 0;
+}
+
+.form-table tbody tr:nth-child(3) td textarea {
+  width: 350px;
+  height: 250px;
+}
