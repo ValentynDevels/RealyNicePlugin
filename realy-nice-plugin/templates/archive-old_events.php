@@ -72,14 +72,6 @@ get_header(); ?>
           <a href="#" class="load_more">Load more!</a>
 
         <?php }
-        else {
-          ?> 
-          <a href="#" class="load_more">Load more!</a>
-
-        <?php
-        }
-
-  
 
         ?>  </div>
 

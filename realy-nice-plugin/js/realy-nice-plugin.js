@@ -3,6 +3,10 @@ const postarea = document.querySelector('.posts');
 const calendarBody = document.getElementById('calendar-body');
 let count = 0; //variable for calendar
 const pagedUl = document.querySelector('ul.page-numbers');
+const searchInput = document.querySelector('.old-search');
+const searchIcon = document.querySelector('.seacrh-icon');
+const openFiltersBtn = document.querySelector('.open-filters-btn');
+const filtersDisplayer = document.querySelector('.filters-displayer');
 
 if (pagedUl) {
   
@@ -224,6 +228,53 @@ function loadMoreRequest(id) {
   
   function daysInMonth(iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
+  }
+
+  // Search
+
+  if (searchInput) {
+    const inday1 = document.getElementById('inday');
+    const inmonth1 = document.getElementById('inmonth');
+    const inyear1 = document.getElementById('inyear');
+    const inday2 = document.getElementById('inday');
+    const inmonth2 = document.getElementById('inmonth');
+    const inyear2 = document.getElementById('inyear');
+
+    const inday1min = document.getElementById('indaymin');
+    const inday2max = document.getElementById('indaymax');
+    const inmonth1min = document.getElementById('inmonthmin');
+    const inmonth2max = document.getElementById('inmonthmax');
+    const inyear1min = document.getElementById('inyearmin');
+    const inyear2max = document.getElementById('inyearmax');
+
+    let output = '';
+
+    filtersDisplayer.oninput = (ev) => {
+      let target = ev.target;
+
+      if (target.getAttribute('id').slice(-1) == '1')
+        output = target.getAttribute('id') + 'min';
+      else if (target.getAttribute('id').slice(-1) == '2')
+        output = target.getAttribute('id') + 'max';
+
+      output = document.getElementById(`${output}`);
+      output.value = target.value;
+    }
+
+    searchInput.addEventListener('focus', () => {
+      searchIcon.classList.add('focus-icon');
+    });
+    searchInput.oninput = () => {
+      searchIcon.classList.add('in-search');
+      console.log(searchInput.value);
+    };
+    searchInput.addEventListener('blur', () => {
+      searchIcon.classList.remove('focus-icon');
+      searchIcon.classList.remove('in-search');
+    });
+    openFiltersBtn.addEventListener('click', () => {
+      filtersDisplayer.classList.toggle('open-filters');
+    });
   }
 
 

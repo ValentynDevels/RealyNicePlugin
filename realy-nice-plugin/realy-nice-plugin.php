@@ -9,7 +9,7 @@
 
 
   require __DIR__ . '/functions.php';
-  require __DIR__ . '/calendar-widget.php';
+  require __DIR__ . '/rnp-widgets.php';
   require __DIR__ . '/rnp-ajax.php';
   require __DIR__ . '/rnp-shortcode.php';
   require __DIR__ . '/cli-events-delete.php';
