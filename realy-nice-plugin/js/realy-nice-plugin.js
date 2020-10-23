@@ -195,7 +195,7 @@ function loadMoreRequest(id) {
 
                 for(let jkey in postDate) {
                   if (Number(postDate[jkey].day) == date && Number(postDate[jkey].month) == (month + 1)
-                      && Number(govno[jkey].year) == year) {
+                      && Number(postDate[jkey].year) == year) {
                     count++;
                     dateZero = postDate[jkey].dayZero;
                   }
