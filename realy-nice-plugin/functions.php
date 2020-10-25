@@ -32,6 +32,10 @@ function rnp_scripts() {
 // custom css for wordpress admin
 function rnp_admin_style() {
   wp_enqueue_style('admin_styles', plugins_url('/css/rnp_admin_theme.css', __FILE__), array(), '1.0.0');
+  wp_enqueue_script('admin_scripts', plugins_url('/js/rnp-admin.js', __FILE__), array(), '1.0.0', true);
+  wp_localize_script('admin_scripts', 'likesOBJ', array(
+    'url' => admin_url('admin-ajax.php'),
+  ));
 }
 add_action('admin_enqueue_scripts', 'rnp_admin_style');
 add_action('login_enqueue_scripts', 'rnp_admin_style');
@@ -64,9 +68,43 @@ function realy_nice_fields() {
   add_meta_box('rnp_meta_box', 'Event fragment and fragment date', 'fragment_callback', 'old_events', 'normal', 'low', array(
     '__back_compat_meta_box' => false,
   ));
+  add_meta_box('rnp_people_box', 'Important people on the event', 'people_metabox_callback', 'old_events', 'normal', 'high', array(
+    '__back_compat_meta_box' => false,
+  ));
 }
 
 //callback for fragment metabox
+add_action('wp_ajax_newperson', 'some_ajax');
+add_action('wp_ajax_nopriv_newperson', 'some_ajax');
+
+function some_ajax() {
+  if (isset($_POST['newperson'])) {
+    wp_die("good request admin!");
+  }
+}
+
+function people_metabox_callback($post, $meta) {
+
+  wp_nonce_field( plugin_basename(__FILE__), 'people_nonce' ); ?>
+
+  <div class="people_meta_wrapper">
+    <div class="people_meta_input">
+      <label>First name</label><input type="text"  placeholder="Ivan"/>
+    </div>
+    <div class="people_meta_input">
+      <label>Last name</label><input type="text"  placeholder="Superman"/>
+    </div>
+    <div class="people_meta_input">
+      <label>Person url name</label><input type="url"  placeholder="https://ivan.com"/>
+    </div>
+   
+    <button id="add_new_person">Add new</button>
+
+  </div>
+
+  <?php
+}
+
 function fragment_callback($post, $meta) {
   $screens = $meta['args'];
 

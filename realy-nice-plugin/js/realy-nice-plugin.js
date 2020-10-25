@@ -233,21 +233,13 @@ function loadMoreRequest(id) {
   // Search
 
   if (searchInput) {
-    const inday1 = document.getElementById('inday');
-    const inmonth1 = document.getElementById('inmonth');
-    const inyear1 = document.getElementById('inyear');
-    const inday2 = document.getElementById('inday');
-    const inmonth2 = document.getElementById('inmonth');
-    const inyear2 = document.getElementById('inyear');
-
-    const inday1min = document.getElementById('indaymin');
-    const inday2max = document.getElementById('indaymax');
-    const inmonth1min = document.getElementById('inmonthmin');
-    const inmonth2max = document.getElementById('inmonthmax');
-    const inyear1min = document.getElementById('inyearmin');
-    const inyear2max = document.getElementById('inyearmax');
 
     let output = '';
+    const rangeInputs = document.querySelectorAll('.range-inputs');
+
+    rangeInputs.forEach(input => {
+      replaceValues(input);
+    });
 
     filtersDisplayer.oninput = (ev) => {
       let target = ev.target;
@@ -274,8 +266,30 @@ function loadMoreRequest(id) {
     });
     openFiltersBtn.addEventListener('click', () => {
       filtersDisplayer.classList.toggle('open-filters');
+      if (openFiltersBtn.innerText == "FILTERS") {
+        openFiltersBtn.style.background = "#00a2b7";
+        openFiltersBtn.innerText = "APPLY";
+      }
+      else if (openFiltersBtn.innerText == "APPLY") {
+        openFiltersBtn.style.background = " #cd2653";
+        openFiltersBtn.innerText = "FILTERS";
+      }
     });
   }
+
+  function replaceValues(inputName) {
+    let inputValueName = '';
+
+    if (inputName.getAttribute('id').slice(-1) == '1')
+      inputValueName = inputName.getAttribute('id') + 'min';
+    else if (inputName.getAttribute('id').slice(-1) == '2')
+      inputValueName = inputName.getAttribute('id') + 'max';
+
+    inputValueName = document.getElementById(`${inputValueName}`);
+
+    inputValueName.value = inputName.value;
+  }
+
 
 
 

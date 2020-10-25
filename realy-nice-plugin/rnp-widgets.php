@@ -151,25 +151,56 @@ class RNP_Search_Widget extends WP_Widget {
       <div class="filters">
         <button class="open-filters-btn">Filters</button>
         <div class="filters-displayer">
-          <label for="inday">Day</label>
-          <div class="date-input">
-            <input id="inday1min" type="number"/>
-              <input class="range-inputs" id="inday1" type="range" min="1" max="15" /><input class="range-inputs" id="inday2" type="range" min="16" max="31" />
-            <input id="inday2max" type="number"/>
-          </div>
+          <div class="ranger">
+            <label class="d-i-l" for="inday">Day</label>
+            <div class="date-input">
+              <div class="one-input">
+                <input id="inday1min" type="number"/>
+                  <input class="range-inputs" id="inday1" type="range" min="1" max="15" /><input class="range-inputs" id="inday2" type="range" min="16" max="31" />
+                <input id="inday2max" type="number"/>
+              </div>
+            </div>
 
-          <label for="inmonth">Month</label>
-          <div class="date-input">
-            <input id="inmonth1min" type="number"/>
-              <input class="range-inputs" id="inmonth1" type="range" min="1" max="6" /><input class="range-inputs" id="inmonth2" type="range" min="7" max="12" />  
-            <input id="inmonth2max" type="number"/>
-          </div>
+            <label class="d-i-l" for="inmonth">Month</label>
+            <div class="date-input">
+              <div class="one-input">
+                <input id="inmonth1min" type="number"/>
+                  <input class="range-inputs" id="inmonth1" type="range" min="1" max="6" /><input class="range-inputs" id="inmonth2" type="range" min="7" max="12" />  
+                <input id="inmonth2max" type="number"/>
+              </div>
+            </div>
 
-          <label for="inyear">Year</label>
-          <div class="date-input">
-            <input id="inyear1min" type="number"/>
-              <input class="range-inputs" id="inyear1" type="range" min="1990" max="2005" /><input class="range-inputs" id="inyear2" type="range" min="2006" max="2020" />
-              <input id="inyear2min" type="number"/>
+            <label class="d-i-l" for="inyear">Year</label>
+            <div class="date-input">
+              <div class="one-input">
+                <input id="inyear1min" type="number"/>
+                  <input class="range-inputs" id="inyear1" type="range" min="1990" max="2005" /><input class="range-inputs" id="inyear2" type="range" min="2006" max="2020" />
+                  <input id="inyear2max" type="number"/>
+              </div>
+            </div>
+          </div>
+          <div class="importances">
+            <span class="imp-head">Imp</span>
+            <div class="one-importance">
+              <label>1</label>
+              <input class="importance" type="checkbox" />
+            </div>
+            <div class="one-importance">
+              <label>2</label>
+              <input class="importance" type="checkbox" />
+            </div>
+            <div class="one-importance">
+              <label>3</label>
+              <input class="importance" type="checkbox" />
+            </div>
+            <div class="one-importance">
+              <label>4</label>
+              <input class="importance" type="checkbox" />
+            </div>
+            <div class="one-importance">
+              <label>5</label>
+              <input class="importance" type="checkbox" />
+            </div>
           </div>
         </div> 
       </div>
