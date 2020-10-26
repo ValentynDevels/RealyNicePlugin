@@ -84,19 +84,19 @@ function people_metabox_callback($post, $meta) {
     <?php foreach($meta_people_data as $meta) { ?>
      <div class="people_small_wrapper">
       <div class="people_meta_input">
-          <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Ivan"/>
+          <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Vitalik" required/>
         </div>
         <div class="people_meta_input">
-          <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman"/>
+          <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman" required/>
         </div>
         <div class="people_meta_input">
-          <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="https://ivan.com"/>
+          <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="http://vitalic.com" required/>
       </div> 
      </div>
     <?php } ?>
   </div>
   <div class="buttons-wrapper">
-    <button id="add_new_person">Add new</button>
+    <button data-id="<?php echo $post->ID; ?>" id="add_new_person">Add new</button>
     <button data-id="<?php echo $post->ID; ?>" id="delete_rec_person">Delete recent</button>
   </div>
 
@@ -106,10 +106,7 @@ function people_metabox_callback($post, $meta) {
 add_action( 'save_post', 'rnp_save_people_meta' );
 
 function rnp_save_people_meta( $post_id ) {
-  if ( ! isset( $_POST['person_name'] )
-    || ! isset( $_POST['person_last_name'] ) 
-    || ! isset( $_POST['person_url']))
-		return; 
+
 	if ( ! wp_verify_nonce( $_POST['myplugin_noncename'], plugin_basename(__FILE__) ) )
 		return;
 
@@ -120,15 +117,21 @@ function rnp_save_people_meta( $post_id ) {
     return;
 
   $people = get_post_meta($post_id, '_event_people', 1);
+
   if (!$people) 
     $people = array();
   //get data from fields
-  $person_name = sanitize_text_field( $_POST['person_name'] );
-  $person_last_name = sanitize_text_field( $_POST['person_last_name'] );
-  $person_url = sanitize_text_field( $_POST['person_url'] );
+  $i = 1;
 
-  array_push($people, array($person_name, $person_last_name, $person_url));
-  // $people = array(['Ivan', 'love', 'govno'], ['Ivan', 'love', 'govno'], ['Ivan', 'love', 'govno']);
+  while (isset($_POST['person_name' . $i])) {
+    $person_name = sanitize_text_field( $_POST['person_name' . $i] );
+    $person_last_name = sanitize_text_field( $_POST['person_last_name' . $i] );
+    $person_url = sanitize_text_field( $_POST['person_url' . $i] );
+
+    array_push($people, array($person_name, $person_last_name, $person_url));
+
+    $i++;
+  }
 
 	//update info in bd
   update_post_meta( $post_id, '_event_people', $people );

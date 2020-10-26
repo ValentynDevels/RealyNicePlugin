@@ -112,20 +112,29 @@ function send_data_calendar() {
 add_action('wp_ajax_newperson', 'some_ajax');
 add_action('wp_ajax_nopriv_newperson', 'some_ajax');
 
-function some_ajax($post) {
+function some_ajax() {
+
+  // if (isset($_POST['array'])) {
+  //   $array = $_POST['array'];
+
+  //   //update_post_meta($_POST['id'], '_event_people', $array);
+  //   wp_die(
+  //     $array
+  //   );
+  // }
 
   if (isset($_POST['newperson'])) {
 
     wp_die(
       '<div class="people_small_wrapper">
       <div class="people_meta_input">
-      <label>First name</label><input name="person_name" type="text"  placeholder="Ivan"/>
+      <label>First name</label><input name="person_name' . $_POST['clickCount'] . '" type="text"  placeholder="Vitalik" required/>
     </div>
     <div class="people_meta_input">
-      <label>Last name</label><input name="person_last_name" type="text"  placeholder="Superman"/>
+      <label>Last name</label><input name="person_last_name' . $_POST['clickCount'] . '" type="text"  placeholder="Superman" required/>
     </div>
     <div class="people_meta_input">
-      <label>Person url name</label><input name="person_url" type="url"  placeholder="https://ivan.com"/>
+      <label>Person url name</label><input name="person_url' . $_POST['clickCount'] . '" type="url"  placeholder="https://ivan.com" required/>
     </div></div>'
     );
   }
