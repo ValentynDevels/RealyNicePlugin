@@ -6,6 +6,11 @@
   justify-content: center;
 }
 
+.people_small_wrapper {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .people_meta_input {
   display: flex;
   flex-direction: column;
@@ -22,17 +27,41 @@
   padding-left: 2px;
 }
 
+.buttons-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
 #add_new_person {
   background-color: #00a2b7;
-  margin-left: 5px;
   border: none;
   border-radius: 3px;
   color: white;
-  padding: 4px 6px;
+  padding: 5px 6px;
+  width: 70px;
+  display: inline-block;
 }
 #add_new_person:hover {
   cursor: pointer;
+  background-color: blue;
 }
+#delete_rec_person {
+  display: inline-block;
+  background-color: darkred;
+  width: 90px;
+  color: white;
+  padding: 5px 0;
+  border: none;
+  border-radius: 3px;
+  margin-left: 10px;
+}
+#delete_rec_person:hover {
+  cursor: pointer;
+  background-color: red;
+}
+
 .inside {
   display: flex;
   flex-direction: column;

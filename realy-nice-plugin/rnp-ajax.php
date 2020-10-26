@@ -107,3 +107,44 @@ function send_data_calendar() {
   }
   exit;
 }
+
+// ajax for important people in admin bar
+add_action('wp_ajax_newperson', 'some_ajax');
+add_action('wp_ajax_nopriv_newperson', 'some_ajax');
+
+function some_ajax($post) {
+
+  if (isset($_POST['newperson'])) {
+
+    wp_die(
+      '<div class="people_small_wrapper">
+      <div class="people_meta_input">
+      <label>First name</label><input name="person_name" type="text"  placeholder="Ivan"/>
+    </div>
+    <div class="people_meta_input">
+      <label>Last name</label><input name="person_last_name" type="text"  placeholder="Superman"/>
+    </div>
+    <div class="people_meta_input">
+      <label>Person url name</label><input name="person_url" type="url"  placeholder="https://ivan.com"/>
+    </div></div>'
+    );
+  }
+  if ( isset($_POST['name']) ) {
+
+    $name = $_POST['name'];
+    $lastName = $_POST['lastName'];
+    $url = $_POST['url'];
+    $post_id = $_POST['postId'];
+
+    $meta_arr = get_post_meta($post_id, '_event_people');
+
+    $lastPerson = array_pop($meta_arr[0]);
+
+    if ($lastPerson[0] == $name && $lastPerson[1] == $lastName && $lastPerson[2] == $url) {
+      update_post_meta($post_id, '_event_people', $meta_arr[0]);
+      wp_die('You delete last person');
+    }
+
+    exit();
+  }
+}

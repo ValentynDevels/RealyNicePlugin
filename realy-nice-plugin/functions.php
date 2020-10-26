@@ -73,38 +73,68 @@ function realy_nice_fields() {
   ));
 }
 
-//callback for fragment metabox
-add_action('wp_ajax_newperson', 'some_ajax');
-add_action('wp_ajax_nopriv_newperson', 'some_ajax');
-
-function some_ajax() {
-  if (isset($_POST['newperson'])) {
-    wp_die("good request admin!");
-  }
-}
-
 function people_metabox_callback($post, $meta) {
 
-  wp_nonce_field( plugin_basename(__FILE__), 'people_nonce' ); ?>
+  wp_nonce_field( plugin_basename(__FILE__), 'people_nonce' ); 
 
+  $meta_people_data = get_post_meta( $post->ID, '_event_people', 1 ); 
+
+  ?>
   <div class="people_meta_wrapper">
-    <div class="people_meta_input">
-      <label>First name</label><input type="text"  placeholder="Ivan"/>
-    </div>
-    <div class="people_meta_input">
-      <label>Last name</label><input type="text"  placeholder="Superman"/>
-    </div>
-    <div class="people_meta_input">
-      <label>Person url name</label><input type="url"  placeholder="https://ivan.com"/>
-    </div>
-   
+    <?php foreach($meta_people_data as $meta) { ?>
+     <div class="people_small_wrapper">
+      <div class="people_meta_input">
+          <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Ivan"/>
+        </div>
+        <div class="people_meta_input">
+          <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman"/>
+        </div>
+        <div class="people_meta_input">
+          <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="https://ivan.com"/>
+      </div> 
+     </div>
+    <?php } ?>
+  </div>
+  <div class="buttons-wrapper">
     <button id="add_new_person">Add new</button>
-
+    <button data-id="<?php echo $post->ID; ?>" id="delete_rec_person">Delete recent</button>
   </div>
 
   <?php
 }
 
+add_action( 'save_post', 'rnp_save_people_meta' );
+
+function rnp_save_people_meta( $post_id ) {
+  if ( ! isset( $_POST['person_name'] )
+    || ! isset( $_POST['person_last_name'] ) 
+    || ! isset( $_POST['person_url']))
+		return; 
+	if ( ! wp_verify_nonce( $_POST['myplugin_noncename'], plugin_basename(__FILE__) ) )
+		return;
+
+	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
+		return;
+
+	if( ! current_user_can( 'edit_post', $post_id ) )
+    return;
+
+  $people = get_post_meta($post_id, '_event_people', 1);
+  if (!$people) 
+    $people = array();
+  //get data from fields
+  $person_name = sanitize_text_field( $_POST['person_name'] );
+  $person_last_name = sanitize_text_field( $_POST['person_last_name'] );
+  $person_url = sanitize_text_field( $_POST['person_url'] );
+
+  array_push($people, array($person_name, $person_last_name, $person_url));
+  // $people = array(['Ivan', 'love', 'govno'], ['Ivan', 'love', 'govno'], ['Ivan', 'love', 'govno']);
+
+	//update info in bd
+  update_post_meta( $post_id, '_event_people', $people );
+}
+
+//callback for fragment metabox
 function fragment_callback($post, $meta) {
   $screens = $meta['args'];
 
