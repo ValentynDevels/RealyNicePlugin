@@ -84,17 +84,37 @@ function realy_nice_fields() {
 function posts_callback($post, $meta) {
   wp_nonce_field( plugin_basename(__FILE__), 'posts_nonce' ); 
   $query = new WP_Query('post_type=post');
-  
+
+  if (get_post_meta($post->ID, '_event_post_ids')[0])
+    $posts_arr = get_post_meta($post->ID, '_event_post_ids')[0];
+  else 
+    $posts_arr = false;
+
   ?>
 
     <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
       <?php 
         if ($query->have_posts()) {
-          while ($query->have_posts()): $query->the_post(); ?>
+          while ($query->have_posts()): $query->the_post(); 
+
+            if ($posts_arr) {
+              foreach($posts_arr as $one_post_id) {
+                if ($one_post_id == get_the_ID()) { ?>
+
+                  <option selected="selected" data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
+                
+                <?php
+                }
+              }
+            }
+            else { ?>
+              <option data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
             
-            <option selected="selected" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
+            <?php 
+            
+            }
           
-          <?php endwhile; wp_reset_postdata(); 
+          endwhile; wp_reset_postdata(); 
         }
       ?>
     </select>

@@ -109,19 +109,10 @@ function send_data_calendar() {
 }
 
 // ajax for important people in admin bar
-add_action('wp_ajax_newperson', 'some_ajax');
-add_action('wp_ajax_nopriv_newperson', 'some_ajax');
+add_action('wp_ajax_newperson', 'new_person_ajax');
+add_action('wp_ajax_nopriv_newperson', 'new_person_ajax');
 
-function some_ajax() {
-
-  // if (isset($_POST['array'])) {
-  //   $array = $_POST['array'];
-
-  //   //update_post_meta($_POST['id'], '_event_people', $array);
-  //   wp_die(
-  //     $array
-  //   );
-  // }
+function new_person_ajax() {
 
   if (isset($_POST['newperson'])) {
 
@@ -156,4 +147,41 @@ function some_ajax() {
 
     exit();
   }
+}
+
+add_action('wp_ajax_eventposts', 'event_posts_ajax');
+add_action('wp_ajax_nopriv_eventposts', 'event_posts_ajax');
+
+function event_posts_ajax() {
+  if (isset($_POST['type'])) {
+    if ($_POST['type'] == 'select') {
+
+      if (get_post_meta($_POST['eventId'], '_event_post_ids')[0])
+        $meta_arr = get_post_meta($_POST['eventId'], '_event_post_ids')[0];
+      else 
+        $meta_arr = get_post_meta($_POST['eventId'], '_event_post_ids');
+
+      array_push($meta_arr, $_POST['id']);
+      update_post_meta($_POST['eventId'], '_event_post_ids', $meta_arr);
+
+      print_r($meta_arr);
+      
+    }
+    else if ($_POST['type'] == 'unselect') {
+      $meta_arr = get_post_meta($_POST['eventId'], '_event_post_ids')[0];
+      $i = 0;
+      $res_arr = [];
+
+      foreach($meta_arr as $meta_element) {
+        if ($meta_element != $_POST['id']) {
+          $res_arr[$i] = $meta_element;
+          $i++;
+        }
+      }
+
+      update_post_meta($_POST['eventId'], '_event_post_ids', $res_arr);
+      wp_die('Ops you delete something');
+    }
+  }
+  exit();
 }
