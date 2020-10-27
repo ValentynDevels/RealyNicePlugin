@@ -236,6 +236,7 @@ function loadMoreRequest(id) {
 
     let output = '';
     const rangeInputs = document.querySelectorAll('.range-inputs');
+    let typingTimer = '';
 
     rangeInputs.forEach(input => {
       replaceValues(input);
@@ -256,10 +257,6 @@ function loadMoreRequest(id) {
     searchInput.addEventListener('focus', () => {
       searchIcon.classList.add('focus-icon');
     });
-    searchInput.oninput = () => {
-      searchIcon.classList.add('in-search');
-      console.log(searchInput.value);
-    };
     searchInput.addEventListener('blur', () => {
       searchIcon.classList.remove('focus-icon');
       searchIcon.classList.remove('in-search');
@@ -275,6 +272,17 @@ function loadMoreRequest(id) {
         openFiltersBtn.innerText = "FILTERS";
       }
     });
+
+
+
+
+    searchInput.oninput = () => {
+      searchIcon.classList.add('in-search');
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+          console.log(searchInput.value);
+      }, 800);
+    };
   }
 
   function replaceValues(inputName) {
