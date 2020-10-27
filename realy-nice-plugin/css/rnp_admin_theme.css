@@ -62,6 +62,10 @@
   background-color: red;
 }
 
+#additional_posts .inside {
+  padding: 5px 0 10px 10px !important;
+}
+
 .inside {
   display: flex;
   flex-direction: column;

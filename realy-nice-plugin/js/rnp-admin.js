@@ -3,6 +3,7 @@ const peopleMetaWrapper = document.querySelector('.people_meta_wrapper');
 const deleteRecPerson = document.getElementById('delete_rec_person');
 let lastPerson = peopleMetaWrapper.querySelector('.people_small_wrapper:last-child');
 let clickCount = 0;
+const select2Container = document.querySelector('.select2-container');
 
 addNewPerson.addEventListener('click', (event) => {
   event.preventDefault();
@@ -53,3 +54,20 @@ deleteRecPerson.addEventListener('click', (event) => {
     };
   }
 });
+
+jQuery(document).ready(function($) {
+  $('.js-example-basic-multiple').select2({
+    width: 800,
+  });
+
+  $('.js-example-basic-multiple').on('select2:unselecting', function(e) {
+    let postID = e.params.args.data.element.dataset.id;
+    console.log(postID);
+  });
+  $('.js-example-basic-multiple').on('select2:selecting', function(e) {
+    let postID = e.params.args.data.element.dataset.id;
+    console.log(postID);
+  });
+});
+
+//select2Container.setAttribute('style', 'max-width: 500px;');

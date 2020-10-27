@@ -32,7 +32,12 @@ function rnp_scripts() {
 // custom css for wordpress admin
 function rnp_admin_style() {
   wp_enqueue_style('admin_styles', plugins_url('/css/rnp_admin_theme.css', __FILE__), array(), '1.0.0');
+  wp_enqueue_style('select2CSS', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css', array(), null);
+
   wp_enqueue_script('admin_scripts', plugins_url('/js/rnp-admin.js', __FILE__), array(), '1.0.0', true);
+  wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js', array(), 'nu', true);
+  wp_enqueue_script('jquery');
+  
   wp_localize_script('admin_scripts', 'likesOBJ', array(
     'url' => admin_url('admin-ajax.php'),
   ));
@@ -71,6 +76,31 @@ function realy_nice_fields() {
   add_meta_box('rnp_people_box', 'Important people on the event', 'people_metabox_callback', 'old_events', 'normal', 'high', array(
     '__back_compat_meta_box' => false,
   ));
+  add_meta_box('additional_posts', 'Posts for the old event', 'posts_callback', 'old_events', 'normal', 'high', array(
+    '__back_compat_meta_box' => false,
+  ));
+}
+
+function posts_callback($post, $meta) {
+  wp_nonce_field( plugin_basename(__FILE__), 'posts_nonce' ); 
+  $query = new WP_Query('post_type=post');
+  
+  ?>
+
+    <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+      <?php 
+        if ($query->have_posts()) {
+          while ($query->have_posts()): $query->the_post(); ?>
+            
+            <option selected="selected" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
+          
+          <?php endwhile; wp_reset_postdata(); 
+        }
+      ?>
+    </select>
+
+<?php
+
 }
 
 function people_metabox_callback($post, $meta) {
