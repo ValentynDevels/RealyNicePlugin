@@ -164,7 +164,7 @@ function event_posts_ajax() {
       array_push($meta_arr, $_POST['id']);
       update_post_meta($_POST['eventId'], '_event_post_ids', $meta_arr);
 
-      print_r($meta_arr);
+      wp_die('new');
       
     }
     else if ($_POST['type'] == 'unselect') {
@@ -180,7 +180,7 @@ function event_posts_ajax() {
       }
 
       update_post_meta($_POST['eventId'], '_event_post_ids', $res_arr);
-      wp_die('Ops you delete something');
+      wp_die('delete');
     }
   }
   exit();

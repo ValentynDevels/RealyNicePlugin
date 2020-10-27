@@ -89,7 +89,7 @@ function posts_callback($post, $meta) {
     $posts_arr = get_post_meta($post->ID, '_event_post_ids')[0];
   else 
     $posts_arr = false;
-
+//selected="selected"
   ?>
 
     <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
@@ -97,23 +97,24 @@ function posts_callback($post, $meta) {
         if ($query->have_posts()) {
           while ($query->have_posts()): $query->the_post(); 
 
-            if ($posts_arr) {
-              foreach($posts_arr as $one_post_id) {
-                if ($one_post_id == get_the_ID()) { ?>
-
-                  <option selected="selected" data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
-                
-                <?php
-                }
+          if ($posts_arr) {
+            foreach($posts_arr as $one_post) {
+              if ($one_post == get_the_ID()) {
+                $selected_attr = 'selected="selected"';
+                break;
               }
+              else 
+                $selected_attr = '';
             }
-            else { ?>
-              <option data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
-            
-            <?php 
-            
-            }
+          }
+
+          ?>
+
+          <option <?php echo $selected_attr; ?> data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
           
+
+          <?php
+
           endwhile; wp_reset_postdata(); 
         }
       ?>

@@ -88,7 +88,8 @@ function ajax_for_event_posts(actionType, actionID, eventID) {
 
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
+      if (!this.responseText)
+        alert();
     }
     else 
       return;
