@@ -18,12 +18,15 @@ if ($query->have_posts()) {
         delete_post_meta( get_the_ID(), '_event-fragment_meta_key');
         delete_post_meta( get_the_ID(), '_event-date_meta_key');
         delete_post_meta( get_the_ID(), '_event_people');
+        delete_post_meta( get_the_ID(), '_event_post_ids');
         delete_post_meta( get_the_ID(), 'like_count');
+        
 
         wp_delete_post( get_the_ID(), true );
     }
 }
 
 delete_option('default_options');
+remove_role( 'rn_redactor' );
 
 die();
