@@ -7,6 +7,8 @@ const searchInput = document.querySelector('.old-search');
 const searchIcon = document.querySelector('.seacrh-icon');
 const openFiltersBtn = document.querySelector('.open-filters-btn');
 const filtersDisplayer = document.querySelector('.filters-displayer');
+const ranger = document.querySelector('.ranger');
+const importances = document.querySelectorAll('.importance');
 
 if (pagedUl) {
   
@@ -242,7 +244,7 @@ function loadMoreRequest(id) {
       replaceValues(input);
     });
 
-    filtersDisplayer.oninput = (ev) => {
+    ranger.oninput = (ev) => {
       let target = ev.target;
 
       if (target.getAttribute('id').slice(-1) == '1')
@@ -259,10 +261,15 @@ function loadMoreRequest(id) {
     });
     searchInput.addEventListener('blur', () => {
       searchIcon.classList.remove('focus-icon');
-      searchIcon.classList.remove('in-search');
     });
+
+    let datemin;
+    let datemax;
+    let imp = 0;
+
     openFiltersBtn.addEventListener('click', () => {
       filtersDisplayer.classList.toggle('open-filters');
+
       if (openFiltersBtn.innerText == "FILTERS") {
         openFiltersBtn.style.background = "#00a2b7";
         openFiltersBtn.innerText = "APPLY";
@@ -270,17 +277,76 @@ function loadMoreRequest(id) {
       else if (openFiltersBtn.innerText == "APPLY") {
         openFiltersBtn.style.background = " #cd2653";
         openFiltersBtn.innerText = "FILTERS";
+
+        let day = document.getElementById('inday1min').value;
+        let month = document.getElementById('inmonth1min').value;
+        let year = document.getElementById('inyear1min').value;
+        day = day > 9 ? day : '0' + day;
+        month = month > 9 ? month : '0' + month;
+
+        datemin = year + '-' + month + '-' + day;
+
+        day = document.getElementById('inday2max').value;
+        month = document.getElementById('inmonth2max').value;
+        year = document.getElementById('inyear2max').value;
+        day = day > 9 ? day : '0' + day;
+        month = month > 9 ? month : '0' + month;
+
+        datemax = year + '-' + month + '-' + day;
+
+        imp = 0;
+
+        importances.forEach(importance => {
+          if (importance.checked)
+            imp = (imp * 10) + Number(importance.dataset.name);
+        });
       }
     });
 
-
-
-
-    searchInput.oninput = () => {
-      searchIcon.classList.add('in-search');
+    searchInput.oninput = async () => {
+      if (!searchIcon.classList.contains('in-search'))
+        searchIcon.classList.add('in-search');
       clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
-          console.log(searchInput.value);
+      typingTimer = setTimeout(async () => {
+        searchIcon.classList.remove('in-search');
+
+        if (searchInput.value) {
+
+        let json;  
+
+        if (!datemin || !datemax) {
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchInput.value}`);
+
+          if (response.ok)
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+        else if (datemin || datemax) {
+          let body = {
+            from: datemin,
+            to: datemax,
+            imp: imp
+          };
+
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchInput.value}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (response.ok)
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+
+          console.log(json);
+        }
       }, 800);
     };
   }

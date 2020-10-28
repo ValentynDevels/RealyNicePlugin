@@ -22,6 +22,7 @@ function rnp_scripts() {
   wp_localize_script('mainJS', 'likesOBJ', array(
     'url' => admin_url('admin-ajax.php'),
     'archive_url' => get_post_type_archive_link('old_events'),
+    'domain' => get_site_url(),
   ));
   wp_localize_script('likeJS', 'likesOBJ', array(
     'url' => admin_url('admin-ajax.php'),
@@ -365,6 +366,91 @@ function sanitize_callback( $options ){
 
 	return $options;
 }
+
+
+// reg route for search 
+add_action( 'rest_api_init', 'reg_route_frontsearch');
+
+function reg_route_frontsearch() {
+
+  register_rest_route( 'rnp/v1', '/old_events/(?P<title>\w+)', 
+    array(
+      array(
+        'methods'             => 'GET',            // метод запроса: GET, POST ...
+        'callback'            => 'rnp_rest_callback',  // функция обработки запроса. Должна вернуть ответ на запрос
+      ),
+      array(
+        'methods'  => 'POST',
+        'callback' => 'if_filters',
+        'args'     => array(
+          'from' => array(
+            'type'     => 'string',
+            'required' => true,    
+          ),
+          'to' => array(
+            'type'     => 'string',
+            'required' => true,    
+          ),
+          'imp' => array(
+            'type'     => 'integer',
+            'required' => true,    
+          ),
+        ),
+      )
+    )
+  );
+}
+
+function rnp_rest_callback( WP_REST_Request $request ) {
+  $query = new WP_Query(array(
+    'post_type' => 'old_events',
+  ));
+
+  if ($query->have_posts()) {
+    $results = array();
+    while ($query->have_posts()) {
+      $query->the_post();
+
+      array_push($results, [get_the_ID(), get_the_title()]);
+    }
+    wp_reset_postdata(); 
+
+    return $results;
+  }
+  else 
+    return new WP_Error('no_events_with_the_id', 'Not found anyone posts', array( 'status' => 404 ));
+}
+
+function if_filters(WP_REST_Request $request) {
+  $from = $request->get_param('from');
+  $to = $request->get_param('to');
+  $imp = (int) $request->get_param('imp');
+  $importans = 0;
+
+  if ($imp != 0) {
+
+    for ($i = 0; $i < 3; $i++) {
+      $importans[$i] = (string) $imp % 10;
+      $imp /= 10;
+    }
+
+    $args = array(
+      'post_type' => 'old_events',
+      'importance' => $importans,
+      'meta_query' => array(
+        array(
+          'key' => '_event-date_meta_key',
+          'value' => [$from, $to],
+          'compare' => 'BETWEEN',
+          'type' => 'DATE',
+        ),
+      ),
+    );
+  }
+
+  return $importans;
+}
+
 
 
 

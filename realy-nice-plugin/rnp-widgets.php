@@ -156,7 +156,7 @@ class RNP_Search_Widget extends WP_Widget {
             <div class="date-input">
               <div class="one-input">
                 <input id="inday1min" type="number"/>
-                  <input class="range-inputs" id="inday1" type="range" min="1" max="15" /><input class="range-inputs" id="inday2" type="range" min="16" max="31" />
+                  <input class="range-inputs" id="inday1" type="range" min="1" max="31" /><input class="range-inputs" id="inday2" type="range" min="1" max="31" />
                 <input id="inday2max" type="number"/>
               </div>
             </div>
@@ -165,7 +165,7 @@ class RNP_Search_Widget extends WP_Widget {
             <div class="date-input">
               <div class="one-input">
                 <input id="inmonth1min" type="number"/>
-                  <input class="range-inputs" id="inmonth1" type="range" min="1" max="6" /><input class="range-inputs" id="inmonth2" type="range" min="7" max="12" />  
+                  <input class="range-inputs" id="inmonth1" type="range" min="1" max="12" /><input class="range-inputs" id="inmonth2" type="range" min="1" max="12" />  
                 <input id="inmonth2max" type="number"/>
               </div>
             </div>
@@ -183,23 +183,23 @@ class RNP_Search_Widget extends WP_Widget {
             <span class="imp-head">Imp</span>
             <div class="one-importance">
               <label>1</label>
-              <input class="importance" type="checkbox" />
+              <input data-name="1" class="importance" type="checkbox" />
             </div>
             <div class="one-importance">
               <label>2</label>
-              <input class="importance" type="checkbox" />
+              <input data-name="2" class="importance" type="checkbox" />
             </div>
             <div class="one-importance">
               <label>3</label>
-              <input class="importance" type="checkbox" />
+              <input data-name="3" class="importance" type="checkbox" />
             </div>
             <div class="one-importance">
               <label>4</label>
-              <input class="importance" type="checkbox" />
+              <input data-name="4" class="importance" type="checkbox" />
             </div>
             <div class="one-importance">
               <label>5</label>
-              <input class="importance" type="checkbox" />
+              <input data-name="5" class="importance" type="checkbox" />
             </div>
           </div>
         </div> 
