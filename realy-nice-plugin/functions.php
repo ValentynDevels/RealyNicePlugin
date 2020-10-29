@@ -402,20 +402,32 @@ function reg_route_frontsearch() {
 }
 
 function rnp_rest_callback( WP_REST_Request $request ) {
+  $title = $request->get_param('title');
+
   $query = new WP_Query(array(
     'post_type' => 'old_events',
   ));
 
   if ($query->have_posts()) {
-    $results = array();
-    while ($query->have_posts()) {
-      $query->the_post();
+    $res = array();
 
-      array_push($results, [get_the_ID(), get_the_title()]);
-    }
-    wp_reset_postdata(); 
+      while ($query->have_posts()) {
+        $query->the_post();
 
-    return $results;
+        if (substr_count(get_the_title(), $title) > 0) {
+          $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
+          
+          array_push($res, array(
+            get_the_title(),
+            get_permalink(),
+            get_post_meta(get_the_ID(), '_event_people'),
+            $postsids
+          ));
+        }
+      }
+      wp_reset_postdata();
+     
+    return $res;
   }
   else 
     return new WP_Error('no_events_with_the_id', 'Not found anyone posts', array( 'status' => 404 ));
@@ -424,19 +436,28 @@ function rnp_rest_callback( WP_REST_Request $request ) {
 function if_filters(WP_REST_Request $request) {
   $from = $request->get_param('from');
   $to = $request->get_param('to');
-  $imp = (int) $request->get_param('imp');
-  $importans = 0;
+  $imp = (string) $request->get_param('imp');
+  $title = $request->get_param('title');
 
-  if ($imp != 0) {
-
-    for ($i = 0; $i < 3; $i++) {
-      $importans[$i] = (string) $imp % 10;
-      $imp /= 10;
-    }
+  if ($imp != '0') {
+    $imp = str_split($imp);
 
     $args = array(
       'post_type' => 'old_events',
-      'importance' => $importans,
+      'importance' => $imp,
+      'meta_query' => array(
+        array(
+          'key' => '_event-date_meta_key',
+          'value' => [$from, $to],
+          'compare' => 'BETWEEN',
+          'type' => 'DATE',
+        ),
+      ),
+    );
+  }
+  else if ($imp == '0') {
+    $args = array(
+      'post_type' => 'old_events',
       'meta_query' => array(
         array(
           'key' => '_event-date_meta_key',
@@ -448,7 +469,31 @@ function if_filters(WP_REST_Request $request) {
     );
   }
 
-  return $importans;
+  $query = new WP_Query($args);
+  $res = array();
+  
+  if ($query->have_posts()) {
+    while ($query->have_posts()) {
+      $query->the_post();
+      if (substr_count(get_the_title(), $title) > 0) {
+
+        $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
+
+        array_push($res, array(
+          get_the_title(), 
+          get_permalink(),
+          get_post_meta(get_the_ID(), '_event_people'),
+          $postsids
+        ));
+      }
+    }
+    wp_reset_postdata();
+
+    return $res;
+  }
+  else 
+    return false;
+
 }
 
 
