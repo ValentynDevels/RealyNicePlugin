@@ -245,6 +245,7 @@ color: green;
 .search-wrapper {
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 .seacrh-icon {
@@ -476,3 +477,57 @@ how to remove the virtical space around the range input in IE*/
     /*Edge starts the margin from the thumb, not the track as other browsers do*/
   }
 }
+
+.archive_widget {
+  width: 80%;
+}
+
+.search-results {
+  width: 100%;
+  height: auto;
+  background-color: white;
+  border: 1px solid lightgray;
+  position: absolute;
+  left: 0;
+  top: 51px;
+  display: flex;
+  justify-content: center;
+}
+
+.post_results,
+.old_results,
+.people_results {
+  height: auto;
+  border: 1px solid red;
+  margin: 0;
+  list-style-type: none;
+}
+
+.search-results li {
+  margin: 0 !important;
+}
+
+.old_results {
+  width: 36%;
+}
+
+.post_results,
+.people_results {
+  width: 32%;
+}
+
+.result_url {
+  text-decoration: none;
+  color:  #007cba;
+  border-bottom: 1px solid black;
+  display: block;
+  width: 100%;
+  line-height: 25px;
+  padding: 5px 0;
+}
+.result_url:hover {
+  background-color: lightgray;
+}
+/* .result_url:not(:last-child) {
+  
+} */

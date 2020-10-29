@@ -69,6 +69,20 @@ function load_archive_template() {
   require __DIR__ . '/templates/archive-old_events.php';
 }
 
+add_action( 'widgets_init', 'reg_space_for_old_search' );
+function reg_space_for_old_search(){
+	register_sidebar( array(
+		'name'          => 'Old events search',
+		'id'            => 'old_events_search',
+		'description'   => 'This is space for search widget (old events)',
+		'class'         => '',
+		'before_widget' => '<div id="archive_widget_id" class="archive_widget">',
+		'after_widget'  => "</div>\n",
+		'before_title'  => '<h6 class="widgettitle">',
+		'after_title'   => "</h6>\n",
+	) );
+}
+
 //Create two metaboxes for Old Events post type 
 function realy_nice_fields() {
   add_meta_box('rnp_meta_box', 'Event fragment and fragment date', 'fragment_callback', 'old_events', 'normal', 'low', array(
@@ -376,8 +390,8 @@ function reg_route_frontsearch() {
   register_rest_route( 'rnp/v1', '/old_events/(?P<title>\w+)', 
     array(
       array(
-        'methods'             => 'GET',            // метод запроса: GET, POST ...
-        'callback'            => 'rnp_rest_callback',  // функция обработки запроса. Должна вернуть ответ на запрос
+        'methods'             => 'GET',        
+        'callback'            => 'rnp_rest_callback',  
       ),
       array(
         'methods'  => 'POST',
@@ -402,7 +416,7 @@ function reg_route_frontsearch() {
 }
 
 function rnp_rest_callback( WP_REST_Request $request ) {
-  $title = $request->get_param('title');
+  $title = explode('_', $request->get_param('title'));
 
   $query = new WP_Query(array(
     'post_type' => 'old_events',
@@ -410,18 +424,25 @@ function rnp_rest_callback( WP_REST_Request $request ) {
 
   if ($query->have_posts()) {
     $res = array();
+    $count = 0;
 
       while ($query->have_posts()) {
         $query->the_post();
 
-        if (substr_count(get_the_title(), $title) > 0) {
+        forEach($title as $t) {
+          if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
+            $count += substr_count(strtolower(get_the_title()), strtolower($t));
+        }
+
+        if ($count > 0) {
           $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
           
           array_push($res, array(
             get_the_title(),
             get_permalink(),
             get_post_meta(get_the_ID(), '_event_people'),
-            $postsids
+            $postsids,
+            $count
           ));
         }
       }
@@ -437,7 +458,7 @@ function if_filters(WP_REST_Request $request) {
   $from = $request->get_param('from');
   $to = $request->get_param('to');
   $imp = (string) $request->get_param('imp');
-  $title = $request->get_param('title');
+  $title = explode('_', $request->get_param('title'));
 
   if ($imp != '0') {
     $imp = str_split($imp);
@@ -475,7 +496,14 @@ function if_filters(WP_REST_Request $request) {
   if ($query->have_posts()) {
     while ($query->have_posts()) {
       $query->the_post();
-      if (substr_count(get_the_title(), $title) > 0) {
+
+      $count = 0;
+
+      forEach($title as $t) {
+        if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
+            $count += substr_count(strtolower(get_the_title()), strtolower($t));
+      }
+      if ($count > 0) {
 
         $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
 
@@ -483,7 +511,8 @@ function if_filters(WP_REST_Request $request) {
           get_the_title(), 
           get_permalink(),
           get_post_meta(get_the_ID(), '_event_people'),
-          $postsids
+          $postsids,
+          $count
         ));
       }
     }

@@ -147,6 +147,17 @@ class RNP_Search_Widget extends WP_Widget {
           </div>
           <!-- search input -->
           <input class="old-search" type="search" placeholder="Search" />
+          <div class="search-results">
+            <ul class="old_results">
+            
+            </ul>
+            <ul class="post_results">
+            
+            </ul>
+            <ul class="people_results">
+            
+            </ul>
+          </div>
         </div>
       <div class="filters">
         <button class="open-filters-btn">Filters</button>

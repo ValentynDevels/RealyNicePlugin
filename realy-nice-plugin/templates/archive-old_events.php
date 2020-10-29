@@ -5,7 +5,9 @@ get_header(); ?>
   <main>
     <div class="container"> <?php
 
-    $paged = $_GET['page'];
+      dynamic_sidebar('old_events_search');
+
+      $paged = $_GET['page'];
 
       if (isset($_GET['day'])) {
         $calendar_date = $_GET['year'] . '-' . $_GET['month'] . '-' . $_GET['day'];
