@@ -98,45 +98,63 @@ function realy_nice_fields() {
 
 function posts_callback($post, $meta) {
   wp_nonce_field( plugin_basename(__FILE__), 'posts_nonce' ); 
-  $query = new WP_Query('post_type=post');
 
-  if (get_post_meta($post->ID, '_event_post_ids')[0])
-    $posts_arr = get_post_meta($post->ID, '_event_post_ids')[0];
-  else 
-    $posts_arr = false;
-//selected="selected"
+  $query = new WP_Query('post_type=post'); 
+  $meta_posts = get_post_meta($post->ID, '_event_posts')[0]; 
   ?>
 
     <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
       <?php 
         if ($query->have_posts()) {
-          while ($query->have_posts()): $query->the_post(); 
 
-          if ($posts_arr) {
-            foreach($posts_arr as $one_post) {
-              if ($one_post == get_the_ID()) {
-                $selected_attr = 'selected="selected"';
-                break;
-              }
-              else 
-                $selected_attr = '';
+          while ($query->have_posts()): $query->the_post(); 
+          $selected = '';
+
+          forEach($meta_posts as $one_meta_post) {
+            if ($one_meta_post[2] == get_the_ID()) {
+              $selected = 'selected="selected"';
+              break;
             }
           }
 
           ?>
-
-          <option <?php echo $selected_attr; ?> data-event-id="<?php echo $post->ID ?>" data-id="<?php the_ID(); ?>"><?php the_title(); ?></option>
+          <option name="rnp_option" 
+            value="<?php echo get_the_title() . '~' . get_permalink() . '~' . get_the_ID(); ?>"
+            <?php echo $selected; ?> ><?php echo the_title(); ?>
+          </option>
           
-
           <?php
 
           endwhile; wp_reset_postdata(); 
         }
       ?>
     </select>
-
 <?php
 
+}
+
+add_action( 'save_post', 'rnp_save_event_posts_meta' );
+
+function rnp_save_event_posts_meta( $post_id ) {
+
+	if ( ! wp_verify_nonce( $_POST['myplugin_noncename'], plugin_basename(__FILE__) ) )
+		return;
+	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
+		return;
+	if( ! current_user_can( 'edit_post', $post_id ) )
+    return;
+
+  $posts = array();
+
+  if (isset($_POST['states'])) {
+    forEach($_POST['states'] as $post) {
+      $temp = explode('~', $post);
+      array_push($posts, $temp);
+    }
+  }
+  
+  //update info in bd
+  update_post_meta( $post_id, '_event_posts', $posts );
 }
 
 function people_metabox_callback($post, $meta) {
@@ -381,149 +399,6 @@ function sanitize_callback( $options ){
 	return $options;
 }
 
-
-// reg route for search 
-add_action( 'rest_api_init', 'reg_route_frontsearch');
-
-function reg_route_frontsearch() {
-
-  register_rest_route( 'rnp/v1', '/old_events/(?P<title>\w+)', 
-    array(
-      array(
-        'methods'             => 'GET',        
-        'callback'            => 'rnp_rest_callback',  
-      ),
-      array(
-        'methods'  => 'POST',
-        'callback' => 'if_filters',
-        'args'     => array(
-          'from' => array(
-            'type'     => 'string',
-            'required' => true,    
-          ),
-          'to' => array(
-            'type'     => 'string',
-            'required' => true,    
-          ),
-          'imp' => array(
-            'type'     => 'integer',
-            'required' => true,    
-          ),
-        ),
-      )
-    )
-  );
-}
-
-function rnp_rest_callback( WP_REST_Request $request ) {
-  $title = explode('_', $request->get_param('title'));
-
-  $query = new WP_Query(array(
-    'post_type' => 'old_events',
-  ));
-
-  if ($query->have_posts()) {
-    $res = array();
-    $count = 0;
-
-      while ($query->have_posts()) {
-        $query->the_post();
-
-        forEach($title as $t) {
-          if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
-            $count += substr_count(strtolower(get_the_title()), strtolower($t));
-        }
-
-        if ($count > 0) {
-          $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
-          
-          array_push($res, array(
-            get_the_title(),
-            get_permalink(),
-            get_post_meta(get_the_ID(), '_event_people'),
-            $postsids,
-            $count
-          ));
-        }
-      }
-      wp_reset_postdata();
-     
-    return $res;
-  }
-  else 
-    return new WP_Error('no_events_with_the_id', 'Not found anyone posts', array( 'status' => 404 ));
-}
-
-function if_filters(WP_REST_Request $request) {
-  $from = $request->get_param('from');
-  $to = $request->get_param('to');
-  $imp = (string) $request->get_param('imp');
-  $title = explode('_', $request->get_param('title'));
-
-  if ($imp != '0') {
-    $imp = str_split($imp);
-
-    $args = array(
-      'post_type' => 'old_events',
-      'importance' => $imp,
-      'meta_query' => array(
-        array(
-          'key' => '_event-date_meta_key',
-          'value' => [$from, $to],
-          'compare' => 'BETWEEN',
-          'type' => 'DATE',
-        ),
-      ),
-    );
-  }
-  else if ($imp == '0') {
-    $args = array(
-      'post_type' => 'old_events',
-      'meta_query' => array(
-        array(
-          'key' => '_event-date_meta_key',
-          'value' => [$from, $to],
-          'compare' => 'BETWEEN',
-          'type' => 'DATE',
-        ),
-      ),
-    );
-  }
-
-  $query = new WP_Query($args);
-  $res = array();
-  
-  if ($query->have_posts()) {
-    while ($query->have_posts()) {
-      $query->the_post();
-
-      $count = 0;
-
-      forEach($title as $t) {
-        if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
-            $count += substr_count(strtolower(get_the_title()), strtolower($t));
-      }
-      if ($count > 0) {
-
-        $postsids = get_post_meta(get_the_ID(), '_event_post_ids');
-
-        array_push($res, array(
-          get_the_title(), 
-          get_permalink(),
-          get_post_meta(get_the_ID(), '_event_people'),
-          $postsids,
-          $count
-        ));
-      }
-    }
-    wp_reset_postdata();
-
-    return $res;
-  }
-  else 
-    return false;
-
-}
 
 
 

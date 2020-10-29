@@ -151,10 +151,10 @@ class RNP_Search_Widget extends WP_Widget {
             <ul class="old_results">
             
             </ul>
-            <ul class="post_results">
+            <ul class="people_results">
             
             </ul>
-            <ul class="people_results">
+            <ul class="post_results">
             
             </ul>
           </div>

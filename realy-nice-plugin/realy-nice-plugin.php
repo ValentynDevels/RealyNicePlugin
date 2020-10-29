@@ -22,7 +22,6 @@ function rnp_new_role() {
     )
   );
 }
-
 register_activation_hook( __FILE__, 'rnp_new_role' );
 
 
@@ -35,6 +34,7 @@ register_activation_hook( __FILE__, 'rnp_new_role' );
   require __DIR__ . '/rnp-shortcode.php';
   require __DIR__ . '/cli-events-delete.php';
   require __DIR__ . '/rnp-old_events-post_type.php';
+  require __DIR__ . '/rnp-rest.php';
 
   // wp_enqueue_scripts
   add_action('wp_enqueue_scripts', 'rnp_scripts');

@@ -315,12 +315,12 @@ function loadMoreRequest(id) {
 
       let resultUrl = document.querySelectorAll('.result_url');
 
-      resultUrl.forEach( el => {
-        el.remove();
-      });
-
       typingTimer = setTimeout(async () => {
         searchIcon.classList.remove('in-search');
+
+        resultUrl.forEach( el => {
+          el.remove();
+        });
 
         if (searchInput.value) {
 
@@ -376,6 +376,15 @@ function loadMoreRequest(id) {
               `
               <li>
                 <a href="${person[2]}" class="result_url">${person[0]} ${person[1]}</a>
+              </li>
+              `);
+              });
+
+              oldEvent[3][0].forEach(person => {
+                postResults.insertAdjacentHTML('beforeend', 
+              `
+              <li>
+                <a href="${person[1]}" class="result_url">${person[0]}</a>
               </li>
               `);
               });

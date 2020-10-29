@@ -60,40 +60,4 @@ jQuery(document).ready(function($) {
     width: 800,
   });
 
-  let type = '';
-  let postID = 0;
-
-  $('.js-example-basic-multiple').on('select2:unselecting', function(e) {
-    postID = e.params.args.data.element.dataset.id;
-    eventId = e.params.args.data.element.dataset.eventId;
-    type = 'unselect';
-    ajax_for_event_posts(type, postID, eventId);
-  });
-  $('.js-example-basic-multiple').on('select2:selecting', function(e) {
-    postID = e.params.args.data.element.dataset.id;
-    eventId = e.params.args.data.element.dataset.eventId;
-    type = 'select';
-    ajax_for_event_posts(type, postID, eventId);
-  });
-
 });
-
-function ajax_for_event_posts(actionType, actionID, eventID) {
-  let xhr = new XMLHttpRequest();
-
-  xhr.open('POST', likesOBJ.url, true);
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  
-  xhr.send(`eventId=${eventID}&id=${actionID}&type=${actionType}&action=eventposts`);
-
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      if (!this.responseText)
-        alert();
-    }
-    else 
-      return;
-  };
-}
-
-//select2Container.setAttribute('style', 'max-width: 500px;');
