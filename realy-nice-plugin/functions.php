@@ -168,20 +168,20 @@ function people_metabox_callback($post, $meta) {
     <?php foreach($meta_people_data as $meta) { ?>
      <div class="people_small_wrapper">
       <div class="people_meta_input">
-          <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Vitalik" required/>
-        </div>
-        <div class="people_meta_input">
-          <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman" required/>
-        </div>
-        <div class="people_meta_input">
-          <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="http://vitalic.com" required/>
-      </div> 
+        <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Vitalik" required/>
+      </div>
+      <div class="people_meta_input">
+        <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman" required/>
+      </div>
+      <div class="people_meta_input">
+        <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="http://vitalic.com" required/>
+      </div>
+      <button data-id="<?php echo $post->ID; ?>" id="delete_rec_person">Delete</button> 
      </div>
     <?php } ?>
   </div>
   <div class="buttons-wrapper">
     <button data-id="<?php echo $post->ID; ?>" id="add_new_person">Add new</button>
-    <button data-id="<?php echo $post->ID; ?>" id="delete_rec_person">Delete recent</button>
   </div>
 
   <?php

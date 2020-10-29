@@ -118,15 +118,17 @@ function new_person_ajax() {
 
     wp_die(
       '<div class="people_small_wrapper">
-      <div class="people_meta_input">
-      <label>First name</label><input name="person_name' . $_POST['clickCount'] . '" type="text"  placeholder="Vitalik" required/>
-    </div>
-    <div class="people_meta_input">
-      <label>Last name</label><input name="person_last_name' . $_POST['clickCount'] . '" type="text"  placeholder="Superman" required/>
-    </div>
-    <div class="people_meta_input">
-      <label>Person url name</label><input name="person_url' . $_POST['clickCount'] . '" type="url"  placeholder="https://ivan.com" required/>
-    </div></div>'
+        <div class="people_meta_input">
+          <label>First name</label><input name="person_name' . $_POST['clickCount'] . '" type="text"  placeholder="Vitalik" required/>
+        </div>
+        <div class="people_meta_input">
+          <label>Last name</label><input name="person_last_name' . $_POST['clickCount'] . '" type="text"  placeholder="Superman" required/>
+        </div>
+        <div class="people_meta_input">
+          <label>Person url name</label><input name="person_url' . $_POST['clickCount'] . '" type="url"  placeholder="https://ivan.com" required/>
+        </div>
+        <button id="delete_rec_person">Delete</button> 
+      </div>'
     );
   }
   if ( isset($_POST['name']) ) {
