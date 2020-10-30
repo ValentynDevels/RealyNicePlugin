@@ -1,57 +1,48 @@
 const addNewPerson = document.getElementById('add_new_person');
 const peopleMetaWrapper = document.querySelector('.people_meta_wrapper');
 const deleteRecPerson = document.getElementById('delete_rec_person');
-let lastPerson = peopleMetaWrapper.querySelector('.people_small_wrapper:last-child');
 let clickCount = 0;
-const select2Container = document.querySelector('.select2-container');
 
 addNewPerson.addEventListener('click', (event) => {
   event.preventDefault();
 
   clickCount++;
 
-  let xhr = new XMLHttpRequest();
+  peopleMetaWrapper.insertAdjacentHTML('beforeend',
+    `
+    <div class="people_small_wrapper">
+      <div class="people_meta_input">
+        <label>First name</label><input name="person[${clickCount}][pn]" type="text"  placeholder="Vitalik" required/>
+      </div>
+      <div class="people_meta_input">
+        <label>Last name</label><input name="person[${clickCount}][pl]" type="text"  placeholder="Superman" required/>
+      </div>
+      <div class="people_meta_input">
+        <label>Person url</label><input name="person[${clickCount}][pu]" type="url"  placeholder="https://ivan.com" required/>
+      </div>
+      <button class="delete-the-person">Delete</button> 
+    </div>
+    `
+  );
 
-  xhr.open('POST', likesOBJ.url, true);
-
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.send(`newperson=new&clickCount=${clickCount}&action=newperson`);
-
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      peopleMetaWrapper.insertAdjacentHTML('beforeend', this.responseText);
-    }
-    else 
-      return;
-  };
 });
 
-deleteRecPerson.addEventListener('click', (event) => {
-  event.preventDefault();
+peopleMetaWrapper.addEventListener('click', ev => {
+  ev.preventDefault();
 
-  let postId = deleteRecPerson.dataset.id;
-  lastPerson = peopleMetaWrapper.querySelector('.people_small_wrapper:last-child');
-  let name = lastPerson.querySelector('input[placeholder=Vitalik]').value;
-  let lastnName = lastPerson.querySelector('input[placeholder=Superman]').value;
-  let url = lastPerson.querySelector('input[type=url]').value;
+  if (ev.target.classList.contains('delete-the-person')) {
+    const smalWrapper = ev.target.closest('.people_small_wrapper');
 
-  lastPerson.remove();
+    if (smalWrapper.querySelector('input[type=url]').value
+    || smalWrapper.querySelector('input[placeholder=Superman]').value
+    || smalWrapper.querySelector('input[placeholder=Vitalik]').value) {
+      let confirmResponse = confirm('Are you sure you want to delete this entry?');
 
-  if (name && lastnName && url) {
-    let xhr = new XMLHttpRequest();
-
-    xhr.open('POST', likesOBJ.url, true);
-
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.send(`deleteperson=delete&name=${name}&lastName=${lastnName}&url=${url}&postId=${postId}&action=newperson`);
-
-    xhr.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        console.log(this.responseText);
-      }
-      else 
-        return;
-    };
+      if (confirmResponse)
+        ev.target.closest('.people_small_wrapper').remove();
+    }
+    else 
+      ev.target.closest('.people_small_wrapper').remove();   
   }
 });
 
