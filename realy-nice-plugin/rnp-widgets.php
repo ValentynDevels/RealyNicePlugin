@@ -134,7 +134,26 @@ class RNP_Search_Widget extends WP_Widget {
 		if ( ! empty( $instance['title'] ) ) {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
     } 
-    
+
+    global $wpdb;
+
+    $dates_request = $wpdb->get_results( "SELECT meta_value FROM wp_postmeta WHERE meta_key = '_event-date_meta_key'" );
+      $date_min = $dates_request[0]->meta_value;
+      $date_max = $date_min;
+
+      forEach($dates_request as $date) {
+        if ($date->meta_value > $date_max)
+          $date_max = $date->meta_value;
+        if ($date->meta_value < $date_min)
+          $date_min = $date->meta_value;
+        
+        echo $date_min . ' | ';
+
+      }
+      $date_min = substr($date_min, 0, 4);
+      $date_max = substr($date_max, 0, 4);
+      $date_center = ($date_max + $date_min) / 2;
+
     ?>
       
 		<div class="search">
@@ -184,9 +203,9 @@ class RNP_Search_Widget extends WP_Widget {
             <label class="d-i-l" for="inyear">Year</label>
             <div class="date-input">
               <div class="one-input">
-                <input id="inyear1min" type="number"/>
-                  <input class="range-inputs" id="inyear1" type="range" min="1990" max="2005" /><input class="range-inputs" id="inyear2" type="range" min="2006" max="2020" />
-                  <input id="inyear2max" type="number"/>
+                <input id="inyear1min" type="number" min="<?php echo $date_min; ?>" max="<?php echo $date_center; ?>"/>
+                  <input class="range-inputs" id="inyear1" type="range" min="<?php echo $date_min; ?>" max="<?php echo $date_center; ?>" /><input class="range-inputs" id="inyear2" type="range" min="<?php echo $date_center + 1; ?>" max="<?php echo $date_max; ?>" />
+                  <input id="inyear2max" type="number" min="<?php echo $date_center + 1; ?>" max="<?php echo $date_max; ?>"/>
               </div>
             </div>
           </div>

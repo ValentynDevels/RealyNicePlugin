@@ -1,6 +1,5 @@
 <?php
 
-
 // reg route for search 
 add_action( 'rest_api_init', 'reg_route_frontsearch');
 
@@ -47,6 +46,7 @@ function rnp_rest_callback( WP_REST_Request $request ) {
 
       while ($query->have_posts()) {
         $query->the_post();
+        $count = 0;
 
         forEach($title as $t) {
           if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 

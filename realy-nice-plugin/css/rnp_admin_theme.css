@@ -50,7 +50,7 @@
   cursor: pointer;
   background-color: blue;
 }
-#delete_rec_person {
+.delete-the-person {
   display: inline-block;
   background-color: darkred;
   width: 70px;
@@ -63,7 +63,7 @@
   transform: translateY(9px);
   margin: 0 5px 0 0;
 }
-#delete_rec_person:hover {
+.delete-the-person:hover {
   cursor: pointer;
   background-color: red;
 }

@@ -11,7 +11,8 @@ function rnp_scripts() {
     wp_add_inline_style('mainCSS', $custom_css['customcss']);
   }
 
-  wp_enqueue_script('mainJS', plugins_url('/js/realy-nice-plugin.js', __FILE__), array(), '1.0.0', true);
+  wp_enqueue_script('mainJS', plugins_url('/js/realy-nice-plugin.js', __FILE__), array('searchJS'), '1.0.0', true);
+  wp_enqueue_script('searchJS', plugins_url('/js/rnp-search.js', __FILE__), array(), '1.0.0', true);
 
   // include likes to post pages
   if (is_singular('old_events')) {
@@ -162,26 +163,36 @@ function people_metabox_callback($post, $meta) {
   wp_nonce_field( plugin_basename(__FILE__), 'people_nonce' ); 
 
   $meta_people_data = get_post_meta( $post->ID, '_event_people', 1 ); 
-
+  $i = 1;
   ?>
   <div class="people_meta_wrapper">
     <?php foreach($meta_people_data as $meta) { ?>
-     <div class="people_small_wrapper">
+
+     <div data-click-count="<?php echo $i; ?>" class="people_small_wrapper">
       <div class="people_meta_input">
-        <label>First name</label><input value="<?php echo $meta[0]; ?>" name="person_name" type="text"  placeholder="Vitalik" required/>
+        <label>First name</label><input 
+          value="<?php echo $meta[0]; ?>" 
+          name="person[<?php echo $i; ?>][pn]" type="text"  
+          placeholder="Vitalik" required/>
       </div>
       <div class="people_meta_input">
-        <label>Last name</label><input value="<?php echo $meta[1]; ?>" name="person_last_name" type="text"  placeholder="Superman" required/>
+        <label>Last name</label><input 
+          value="<?php echo $meta[1]; ?>" 
+          name="person[<?php echo $i; ?>][pl]" type="text"  
+          placeholder="Superman" required/>
       </div>
       <div class="people_meta_input">
-        <label>Person url name</label><input value="<?php echo $meta[2]; ?>" name="person_url" type="url"  placeholder="http://vitalic.com" required/>
+        <label>Person url</label><input 
+        value="<?php echo $meta[2]; ?>" 
+        name="person[<?php echo $i; ?>][pu]" type="url"  
+        placeholder="http://vitalic.com" required/>
       </div>
-      <button data-id="<?php echo $post->ID; ?>" id="delete_rec_person">Delete</button> 
+      <button class="delete-the-person">Delete</button> 
      </div>
-    <?php } ?>
+    <?php $i++; } ?>
   </div>
   <div class="buttons-wrapper">
-    <button data-id="<?php echo $post->ID; ?>" id="add_new_person">Add new</button>
+    <button id="add_new_person">Add new</button>
   </div>
 
   <?php
@@ -200,21 +211,11 @@ function rnp_save_people_meta( $post_id ) {
 	if( ! current_user_can( 'edit_post', $post_id ) )
     return;
 
-  $people = get_post_meta($post_id, '_event_people', 1);
+  $people = array();
 
-  if (!$people) 
-    $people = array();
-  //get data from fields
-  $i = 1;
-
-  while (isset($_POST['person_name' . $i])) {
-    $person_name = sanitize_text_field( $_POST['person_name' . $i] );
-    $person_last_name = sanitize_text_field( $_POST['person_last_name' . $i] );
-    $person_url = sanitize_text_field( $_POST['person_url' . $i] );
-
-    array_push($people, array($person_name, $person_last_name, $person_url));
-
-    $i++;
+  if (isset($_POST['person'])) {
+    forEach($_POST['person'] as $person) 
+      array_push($people, array($person['pn'], $person['pl'], $person['pu']));
   }
 
 	//update info in bd
