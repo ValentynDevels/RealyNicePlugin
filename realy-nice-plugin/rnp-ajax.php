@@ -107,3 +107,47 @@ function send_data_calendar() {
   }
   exit;
 }
+
+
+// Get and send info about posts with date for calendar
+add_action('wp_ajax_posts', 'send_posts');
+add_action('wp_ajax_nopriv_posts', 'send_posts');
+
+function send_posts() {
+  if (isset($_GET['title'])) {
+    $title = explode('+', $_GET['title']);
+
+    $args = array(
+      'post_type' => 'post',
+    );
+    
+    $query = new WP_Query($args);
+    
+    if ($query->have_posts()) {
+    
+      $posts = array();
+
+      while ($query->have_posts()) {
+        $query->the_post();
+        $count = 0;
+
+        forEach($title as $t) {
+          if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
+            $count += substr_count(strtolower(get_the_title()), strtolower($t));
+        }
+
+        if ($count > 0) {
+          array_push($posts, array(
+            'title' => get_the_title(), 
+            'raiting' => $count,
+            'postId' => get_the_ID()
+          ));
+        }
+      }
+      $json = json_encode($posts);
+      echo $json;
+    }
+    exit;
+  }
+  exit;
+}

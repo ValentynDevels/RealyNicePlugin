@@ -8,15 +8,8 @@ const searchResults = document.querySelector('.search-results');
 const postResults = document.querySelector('.post_results');
 const oldResults = document.querySelector('.old_results');
 const peopleResults = document.querySelector('.people_results');
+const closeSearch = document.querySelector('.close-search');
 let searchValue;
-
-const main = document.querySelector('main');
-main.classList.add('main');
-main.addEventListener('click', main_event => {
-  if (main_event.target.classList.contains('main')) {
-    searchResults.classList.add('no-focused');
-  }
-})
 
 if (searchInput) {
 
@@ -42,9 +35,14 @@ if (searchInput) {
 
   searchInput.addEventListener('focus', () => {
     searchIcon.classList.add('focus-icon');
+    if (searchResults.classList.contains('no-focused'))
+      searchResults.classList.remove('no-focused');
   });
   searchInput.addEventListener('blur', () => {
     searchIcon.classList.remove('focus-icon');
+  });
+  closeSearch.addEventListener('click', () => {
+    searchResults.classList.add('no-focused');
   });
 
   let datemin;
@@ -87,58 +85,65 @@ if (searchInput) {
     }
   });
 
-  searchInput.oninput = async () => {
-    if (!searchIcon.classList.contains('in-search'))
-      searchIcon.classList.add('in-search');
-    clearTimeout(typingTimer);
+  // searchInput.onblur = () => {
+  //   searchResults.classList.add('no-focused');
+  // };
 
+  searchInput.oninput = async () => {
     let resultUrlWrapper = document.querySelectorAll('.res_url_wrapper');
 
-    typingTimer = setTimeout(async () => {
-      searchIcon.classList.remove('in-search');
+    if (searchInput.value.length > 2) {
 
-      resultUrlWrapper.forEach( el => {
-        el.remove();
-      });
+      if (!searchIcon.classList.contains('in-search'))
+        searchIcon.classList.add('in-search');
 
-      if (searchInput.value) {
+      clearTimeout(typingTimer);
 
-      searchValue = searchInput.value.replace(/ /g, "_");
+      typingTimer = setTimeout(async () => {
 
-      let json;  
+        searchIcon.classList.remove('in-search');
 
-      if (!datemin || !datemax) {
-        let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`);
-
-        if (response.ok)
-          json = await response.json();
-        else {
-          alert("Ошибка HTTP: " + response.status);
-        }
-      }
-      else if (datemin || datemax) {
-        let body = {
-          from: datemin,
-          to: datemax,
-          imp: imp
-        };
-
-        let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify(body)
+        resultUrlWrapper.forEach( el => {
+          el.remove();
         });
 
-        if (response.ok) 
-          json = await response.json();
-        else {
-          alert("Ошибка HTTP: " + response.status);
-        }
-      }
+        searchValue = searchInput.value.replace(/ /g, "_");
 
-        if (json) {
+        let json;  
+
+        if (!datemin || !datemax) {
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`);
+
+          if (response.ok)
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+        else if (datemin || datemax) {
+          let body = {
+            from: datemin,
+            to: datemax,
+            imp: imp
+          };
+
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (response.ok) 
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+        console.log(json);
+
+        if (json.length > 0) {
           let id = 0;
           searchResults.classList.remove('no-focused');
 
@@ -146,11 +151,10 @@ if (searchInput) {
 
           json.forEach(oldEvent => {
 
-
             oldResults.insertAdjacentHTML('beforeend', 
             `
             <li class="res_url_wrapper old_url_wrapper">
-              <a data-id="${id}" href="${oldEvent[1]}" class="result_url result_old">${oldEvent[0]}</a>
+              <a data-id="${id}" href="${oldEvent.postUrl}" class="result_url result_old">${oldEvent.postTitle}</a>
             </li>
             `
             );
@@ -175,29 +179,28 @@ if (searchInput) {
               let pseudodivs = '';
               let j = the_ID;
 
-              for (; j >= 1; j--) {
+              for (; j >= 1; j--) 
                 pseudodivs += '<div class="pseudo-div"></div>';
-              }
 
               peopleResults.insertAdjacentHTML('afterbegin', pseudodivs);
               postResults.insertAdjacentHTML('afterbegin', pseudodivs);
 
-              json[the_ID][2][0].forEach(person => {
+              json[the_ID].importantPeople.forEach(person => {
                 
                 peopleResults.insertAdjacentHTML('beforeend', 
                 `
                 <li class="res_url_wrapper res_other_wrapper">
-                  <a href="${person[2]}" class="result_url other-results">${person[0]} ${person[1]}</a>
+                  <a href="${person.personUrl}" class="result_url other-results">${person.personName} ${person.personLastname}</a>
                 </li>
                 `);
               });
 
-              json[the_ID][3][0].forEach(person => {
+              json[the_ID].eventPosts.forEach(post => {
 
                 postResults.insertAdjacentHTML('beforeend', 
                 `
                 <li class="res_url_wrapper res_other_wrapper">
-                  <a href="${person[1]}" class="result_url other-results">${person[0]}</a>
+                  <a href="${post.url}" class="result_url other-results">${post.title}</a>
                 </li>
                 `);
               });
@@ -208,8 +211,17 @@ if (searchInput) {
 
           });
         }
-      }
-    }, 800);
+        else {
+          oldResults.insertAdjacentHTML('beforeend', 
+            `
+            <li class="res_url_wrapper old_url_wrapper">
+              No results :(
+            </li>
+            `
+            );
+        }
+      }, 800);
+    }
   };
 }
 
@@ -231,7 +243,7 @@ function sortBubble(data) {
   for (let i = data.length - 1; i > 0; i--) {  
     let counter = 0;
     for (let j = 0; j < i; j++) {
-        if (data[j][4] < data[j+1][4]) {
+        if (data[j].searchRaiting < data[j+1].searchRaiting) {
             tmp = data[j];
             data[j] = data[j+1];
             data[j+1] = tmp;

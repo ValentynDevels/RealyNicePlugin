@@ -263,6 +263,7 @@ color: green;
 input[type="search"].old-search {
   font-size: 24px;
   padding: 10px 10px;
+  border-right: none;
 }
 
 .focus-icon {
@@ -550,4 +551,36 @@ how to remove the virtical space around the range input in IE*/
 .no-focused {
   height: 0 !important;
   overflow: hidden !important;
+  transition: 0.4s;
+}
+.close-search {
+  width: 51px;
+  height: 51px;
+  background-color: #fff;
+  border: 1px solid lightgray;
+  border-left: none;
+  flex-shrink: 0;
+  position: relative;
+}
+.close-search:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.close-chrest1, 
+.close-chrest2 {
+  width: 28px;
+  height: 2px;
+  background-color: black;
+  position: absolute;
+  display: inline-block;
+  top: calc(50% - 1px);
+  left: calc(50% - 14px);
+}
+
+.close-chrest1 {
+  transform: rotate(45deg);
+}
+.close-chrest2 {
+  transform: rotate(-45deg);
 }

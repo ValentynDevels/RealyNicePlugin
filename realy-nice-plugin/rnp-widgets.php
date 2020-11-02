@@ -146,9 +146,6 @@ class RNP_Search_Widget extends WP_Widget {
           $date_max = $date->meta_value;
         if ($date->meta_value < $date_min)
           $date_min = $date->meta_value;
-        
-        echo $date_min . ' | ';
-
       }
       $date_min = substr($date_min, 0, 4);
       $date_max = substr($date_max, 0, 4);
@@ -166,6 +163,10 @@ class RNP_Search_Widget extends WP_Widget {
           </div>
           <!-- search input -->
           <input class="old-search" type="search" placeholder="Search" />
+          <div class="close-search">
+            <span class="close-chrest1"></span>
+            <span class="close-chrest2"></span>
+          </div>
           <div class="search-results">
             <ul class="old_results">
             
