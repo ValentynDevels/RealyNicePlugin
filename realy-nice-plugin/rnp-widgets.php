@@ -200,9 +200,9 @@ class RNP_Search_Widget extends WP_Widget {
             <label class="d-i-l" for="inyear">Year</label>
             <div class="date-input">
               <div class="one-input">
-                <input id="inyear1min" type="number"/>
+                <input id="inyear1min" type="number" min="<?php echo $date_min; ?>" max="<?php echo $date_center; ?>"/>
                   <input class="range-inputs" id="inyear1" type="range" min="<?php echo $date_min; ?>" max="<?php echo $date_center; ?>" /><input class="range-inputs" id="inyear2" type="range" min="<?php echo $date_center + 1; ?>" max="<?php echo $date_max; ?>" />
-                  <input id="inyear2max" type="number"/>
+                  <input id="inyear2max" type="number" min="<?php echo $date_center + 1; ?>" max="<?php echo $date_max; ?>"/>
               </div>
             </div>
           </div>

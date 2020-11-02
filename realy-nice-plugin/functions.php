@@ -100,33 +100,22 @@ function realy_nice_fields() {
 function posts_callback($post, $meta) {
   wp_nonce_field( plugin_basename(__FILE__), 'posts_nonce' ); 
 
-  $query = new WP_Query('post_type=post'); 
   $meta_posts = get_post_meta($post->ID, '_event_posts')[0]; 
   ?>
 
-    <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+    <select class="js-data-example-ajax" name="states[]" multiple="multiple">
       <?php 
-        if ($query->have_posts()) {
+        if ($meta_posts) {
+          foreach($meta_posts as $meta_post) {
+            ?>
+            <option 
+              selected="selected" 
+              value="<?php echo $meta_post['id']; ?>">
+              <?php echo $meta_post['title']; ?>
+            </option>
 
-          while ($query->have_posts()): $query->the_post(); 
-          $selected = '';
-
-          forEach($meta_posts as $one_meta_post) {
-            if ($one_meta_post[2] == get_the_ID()) {
-              $selected = 'selected="selected"';
-              break;
-            }
+            <?php
           }
-
-          ?>
-          <option name="rnp_option" 
-            value="<?php echo get_the_title() . '~' . get_permalink() . '~' . get_the_ID(); ?>"
-            <?php echo $selected; ?> ><?php echo the_title(); ?>
-          </option>
-          
-          <?php
-
-          endwhile; wp_reset_postdata(); 
         }
       ?>
     </select>
@@ -148,9 +137,34 @@ function rnp_save_event_posts_meta( $post_id ) {
   $posts = array();
 
   if (isset($_POST['states'])) {
-    forEach($_POST['states'] as $post) {
-      $temp = explode('~', $post);
-      array_push($posts, $temp);
+
+    if (get_post_meta($post_id, '_event_posts')[0]) {
+      $posts = get_post_meta($post_id, '_event_posts')[0];
+    }
+
+    $query = new WP_Query(array(
+      'post__in' => $_POST['states']
+    ));
+
+    if ($query->have_posts()) {
+      while ($query->have_posts()) {
+        $query->the_post();
+        $count = 0;
+
+        forEach($posts as $post) {
+          if (in_array(get_the_ID(), $post))
+            $count++;
+        }
+
+        if ($count == 0) {
+          array_push($posts, array(
+            'title' => get_the_title(),
+            'url' => get_permalink(),
+            'id' => get_the_ID()
+          ));
+        }
+      }
+      wp_reset_postdata();
     }
   }
   
@@ -168,7 +182,7 @@ function people_metabox_callback($post, $meta) {
   <div class="people_meta_wrapper">
     <?php foreach($meta_people_data as $meta) { ?>
 
-     <div class="people_small_wrapper">
+     <div data-click-count="<?php echo $i; ?>" class="people_small_wrapper">
       <div class="people_meta_input">
         <label>First name</label><input 
           value="<?php echo $meta[0]; ?>" 
@@ -189,7 +203,7 @@ function people_metabox_callback($post, $meta) {
       </div>
       <button class="delete-the-person">Delete</button> 
      </div>
-    <?php } ?>
+    <?php $i++; } ?>
   </div>
   <div class="buttons-wrapper">
     <button id="add_new_person">Add new</button>

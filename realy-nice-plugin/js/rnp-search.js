@@ -88,64 +88,65 @@ if (searchInput) {
   });
 
   searchInput.oninput = async () => {
-    if (!searchIcon.classList.contains('in-search'))
-      searchIcon.classList.add('in-search');
-    clearTimeout(typingTimer);
-
     let resultUrlWrapper = document.querySelectorAll('.res_url_wrapper');
 
-    typingTimer = setTimeout(async () => {
-      searchIcon.classList.remove('in-search');
+    if (searchInput.value.length > 2) {
 
-      resultUrlWrapper.forEach( el => {
-        el.remove();
-      });
+      if (!searchIcon.classList.contains('in-search'))
+        searchIcon.classList.add('in-search');
 
-      if (searchInput.value) {
+      clearTimeout(typingTimer);
 
-      searchValue = searchInput.value.replace(/ /g, "_");
+      typingTimer = setTimeout(async () => {
 
-      let json;  
+        searchIcon.classList.remove('in-search');
 
-      if (!datemin || !datemax) {
-        let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`);
-
-        if (response.ok)
-          json = await response.json();
-        else {
-          alert("Ошибка HTTP: " + response.status);
-        }
-      }
-      else if (datemin || datemax) {
-        let body = {
-          from: datemin,
-          to: datemax,
-          imp: imp
-        };
-
-        let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify(body)
+        resultUrlWrapper.forEach( el => {
+          el.remove();
         });
 
-        if (response.ok) 
-          json = await response.json();
-        else {
-          alert("Ошибка HTTP: " + response.status);
-        }
-      }
+        searchValue = searchInput.value.replace(/ /g, "_");
 
-        if (json) {
+        let json;  
+
+        if (!datemin || !datemax) {
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`);
+
+          if (response.ok)
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+        else if (datemin || datemax) {
+          let body = {
+            from: datemin,
+            to: datemax,
+            imp: imp
+          };
+
+          let response = await fetch(`${likesOBJ.domain}/wp-json/rnp/v1/old_events/${searchValue}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (response.ok) 
+            json = await response.json();
+          else {
+            alert("Ошибка HTTP: " + response.status);
+          }
+        }
+
+        if (json.length > 0) {
           let id = 0;
           searchResults.classList.remove('no-focused');
 
           json = sortBubble(json);
 
           json.forEach(oldEvent => {
-
 
             oldResults.insertAdjacentHTML('beforeend', 
             `
@@ -175,9 +176,8 @@ if (searchInput) {
               let pseudodivs = '';
               let j = the_ID;
 
-              for (; j >= 1; j--) {
+              for (; j >= 1; j--) 
                 pseudodivs += '<div class="pseudo-div"></div>';
-              }
 
               peopleResults.insertAdjacentHTML('afterbegin', pseudodivs);
               postResults.insertAdjacentHTML('afterbegin', pseudodivs);
@@ -208,8 +208,17 @@ if (searchInput) {
 
           });
         }
-      }
-    }, 800);
+        else {
+          oldResults.insertAdjacentHTML('beforeend', 
+            `
+            <li class="res_url_wrapper old_url_wrapper">
+              No results :(
+            </li>
+            `
+            );
+        }
+      }, 800);
+    }
   };
 }
 
