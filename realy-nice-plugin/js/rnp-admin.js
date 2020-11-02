@@ -5,17 +5,17 @@ let clickCount = 0;
 
 if (addNewPerson) {
   const lastPeople = peopleMetaWrapper.querySelector('.people_small_wrapper:last-child');
-  
+
   if (!lastPeople)
     clickCount = 0;
-  else 
+  else
     clickCount = Number(lastPeople.dataset.clickCount);
 
   addNewPerson.addEventListener('click', (event) => {
     event.preventDefault();
-  
+
     clickCount++;
-  
+
     peopleMetaWrapper.insertAdjacentHTML('beforeend',
       `
       <div data-click-count="${clickCount}" class="people_small_wrapper">
@@ -32,29 +32,29 @@ if (addNewPerson) {
       </div>
       `
     );
-  
+
   });
 }
 
 if (peopleMetaWrapper) {
   peopleMetaWrapper.addEventListener('click', ev => {
     ev.preventDefault();
-  
+
     if (ev.target.classList.contains('delete-the-person')) {
       const smalWrapper = ev.target.closest('.people_small_wrapper');
-  
+
       if (smalWrapper.querySelector('input[type=url]').value
       || smalWrapper.querySelector('input[placeholder=Superman]').value
       || smalWrapper.querySelector('input[placeholder=Vitalik]').value) {
         let confirmResponse = confirm('Are you sure you want to delete this entry?');
-  
+
         if (confirmResponse)
           ev.target.closest('.people_small_wrapper').remove();
           clickCount--;
       }
-      else 
+      else
         ev.target.closest('.people_small_wrapper').remove();
-        clickCount--;   
+        clickCount--;
     }
   });
 }
@@ -80,9 +80,8 @@ jQuery(document).ready(function($) {
 
         for (let i = 0; i < data.length; i++) {
           res.push({
-            "id": i,
             "text": data[i].title,
-            "value": data[i].postId
+            "id": data[i].postId
           });
         }
 
@@ -92,16 +91,16 @@ jQuery(document).ready(function($) {
       }
     },
     width: 800,
-    templateSelection: function (data) {
-      $(data.element).attr('value', data.value);
-      return data.text;
-    }
+    // templateSelection: function (data) {
+    //   $(data.element).attr('value', data.value);
+    //   return data.text;
+    // }
   });
 });
 
 function sortBubble(data) {
-  let tmp; 
-  for (let i = data.length - 1; i > 0; i--) {  
+  let tmp;
+  for (let i = data.length - 1; i > 0; i--) {
     let counter = 0;
     for (let j = 0; j < i; j++) {
         if (data[j].raiting < data[j+1].raiting) {
@@ -110,10 +109,10 @@ function sortBubble(data) {
             data[j+1] = tmp;
             counter++;
         }
-    }  
+    }
     if(counter==0){
       break;
-    } 
+    }
   }
   return data;
 };
