@@ -15,13 +15,13 @@ function change_amount_likes() {
     }
     if ($_POST['like'] == 'yes')
       $meta += 1;
-    else if ($_POST['like'] == 'no') 
+    else if ($_POST['like'] == 'no')
       $meta -= 1;
     else if ($_POST['like'] == 'first') {
       wp_die($meta);
       return;
     }
-    
+
     update_post_meta($postID, 'like_count', $meta);
     wp_die($meta);
   }
@@ -37,7 +37,7 @@ function change_amount_likes() {
   function get_more_posts() {
     if (isset($_POST['ids'])) {
       $arr = explode(',', $_POST['ids']);
-      
+
       $args = array(
         'post_type' => 'old_events',
         'posts_per_page' => get_option('default_options')['amount'],
@@ -49,17 +49,17 @@ function change_amount_likes() {
       $query = new Wp_query($args);
 
       while ($query->have_posts()): $query->the_post();
-        array_push($posts, array( 
+        array_push($posts, array(
           "id" => get_the_ID(),
           "link" => get_permalink(),
           "img" => get_the_post_thumbnail_url( get_the_ID() ),
           "title" => get_the_title(),
           "fragment" => get_post_meta(get_the_ID(), '_event-fragment_meta_key')[0]
         ));
-      
+
       endwhile;
       wp_reset_postdata();
-      
+
       $json = json_encode($posts);
       echo $json;
     }
@@ -76,11 +76,11 @@ function send_data_calendar() {
       'post_type' => 'old_events',
       'meta_key' => '_event-date_meta_key',
     );
-    
+
     $query = new WP_Query($args);
-    
+
     if ($query->have_posts()) {
-    
+
       $posts = array();
 
       while ($query->have_posts()) {
@@ -93,11 +93,11 @@ function send_data_calendar() {
           $date[2] = $date[2][1];
         }
 
-        array_push($posts, array( 
+        array_push($posts, array(
           "year" => $date[0],
           "month" => $date[1],
           "dayZero" => $day_zero,
-          "day" => $date[2], 
+          "day" => $date[2],
         ));
       }
       $json = json_encode($posts);
@@ -119,12 +119,13 @@ function send_posts() {
 
     $args = array(
       'post_type' => 'post',
+	  'posts_per_page' => -1
     );
-    
+
     $query = new WP_Query($args);
-    
+
     if ($query->have_posts()) {
-    
+
       $posts = array();
 
       while ($query->have_posts()) {
@@ -132,13 +133,13 @@ function send_posts() {
         $count = 0;
 
         forEach($title as $t) {
-          if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0) 
+          if (substr_count(strtolower(get_the_title()), strtolower($t)) > 0)
             $count += substr_count(strtolower(get_the_title()), strtolower($t));
         }
 
         if ($count > 0) {
           array_push($posts, array(
-            'title' => get_the_title(), 
+            'title' => get_the_title(),
             'raiting' => $count,
             'postId' => get_the_ID()
           ));
