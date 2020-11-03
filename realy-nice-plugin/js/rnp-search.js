@@ -60,6 +60,7 @@ if (searchInput) {
       openFiltersBtn.style.background = " #cd2653";
       openFiltersBtn.innerText = "FILTERS";
 
+      const resUrlWrappers = document.querySelectorAll('.res_url_wrapper');
       let day = document.getElementById('inday1min').value;
       let month = document.getElementById('inmonth1min').value;
       let year = document.getElementById('inyear1min').value;
@@ -81,6 +82,10 @@ if (searchInput) {
       importances.forEach(importance => {
         if (importance.checked)
           imp = (imp * 10) + Number(importance.dataset.name);
+      });
+
+      resUrlWrappers.forEach(li => {
+        li.remove();
       });
     }
   });
@@ -116,9 +121,6 @@ if (searchInput) {
 
           if (response.ok)
             json = await response.json();
-          else {
-            alert("Ошибка HTTP: " + response.status);
-          }
         }
         else if (datemin || datemax) {
           let body = {
@@ -141,7 +143,6 @@ if (searchInput) {
             alert("Ошибка HTTP: " + response.status);
           }
         }
-        console.log(json);
 
         if (json.length > 0) {
           let id = 0;

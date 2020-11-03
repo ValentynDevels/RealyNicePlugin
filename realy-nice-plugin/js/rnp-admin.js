@@ -91,11 +91,15 @@ jQuery(document).ready(function($) {
       }
     },
     width: 800,
-    // templateSelection: function (data) {
-    //   $(data.element).attr('value', data.value);
-    //   return data.text;
-    // }
+
   });
+  $('.js-data-example-ajax').on('select2:unselect', e => {
+    let element = e.params.data.element;
+    let optionId = element.dataset.select2Id;
+    element = document.querySelector(`option[data-select2-id=${optionId}]`);
+    element.remove();
+  });
+
 });
 
 function sortBubble(data) {

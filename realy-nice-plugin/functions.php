@@ -138,10 +138,6 @@ function rnp_save_event_posts_meta( $post_id ) {
 
   if (isset($_POST['states'])) {
 
-    if (get_post_meta($post_id, '_event_posts')[0]) {
-      $posts = get_post_meta($post_id, '_event_posts')[0];
-    }
-
     $query = new WP_Query(array(
       'post__in' => $_POST['states']
     ));
@@ -149,20 +145,12 @@ function rnp_save_event_posts_meta( $post_id ) {
     if ($query->have_posts()) {
       while ($query->have_posts()) {
         $query->the_post();
-        $count = 0;
-
-        forEach($posts as $post) {
-          if (in_array(get_the_ID(), $post))
-            $count++;
-        }
-
-        if ($count == 0) {
-          array_push($posts, array(
-            'title' => get_the_title(),
-            'url' => get_permalink(),
-            'id' => get_the_ID()
-          ));
-        }
+        
+        array_push($posts, array(
+          'title' => get_the_title(),
+          'url' => get_permalink(),
+          'id' => get_the_ID()
+        ));
       }
       wp_reset_postdata();
     }
